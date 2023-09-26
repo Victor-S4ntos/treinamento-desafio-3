@@ -60,10 +60,14 @@ const botaoIgual = document.getElementById('igual');//botão para exibir o resul
 //exbir no campo ------------------------------------------------------
 botoesOperadores.forEach((botao) => {
   botao.addEventListener("click", () => {
-    if (campoDeExibicao.innerHTML.slice(-1) === " " && botao.innerHTML !== " " && botao.innerHTML !== operacoes) {
-      return;
+    const conteudoCampo = campoDeExibicao.innerHTML.trim(); 
+    const ultimoCaractere = conteudoCampo.slice(-1);
+
+    if (operadores.includes(ultimoCaractere) && operadores.includes(botao.innerHTML)) {
+      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + '  ' + botao.innerHTML + '  ';
+    } else {
+      campoDeExibicao.innerHTML += '  ' + botao.innerHTML + '  ';
     }
-    campoDeExibicao.innerHTML += '  ' + botao.innerHTML + '  ';
   });
 });
 
@@ -87,14 +91,15 @@ botaoLimpar.addEventListener("click", () => {campoDeExibicao.innerHTML = ""});
 
 //fazer o calculo e exibir resultado da conta ----------------------------------------------
 const resultado = new Calculadora();
-
+const operadores = ['+', '-', 'x', '/'];
 botaoIgual.addEventListener("click", () => {
-  const operadores = ['+', '-', 'x', '/'];
   const operacao = campoDeExibicao.innerHTML.split('').find(operar => operadores.includes(operar));
   const [valorA, valorB] = campoDeExibicao.innerHTML.split(operacao).map(item => item.replace(',', '.'));
+
   resultado.valorA = parseFloat(valorA);
   resultado.operacao = operacao;
   resultado.valorB = parseFloat(valorB);
+
   if(isNaN(resultado.conta())){
     console.log('erro ao fazer a operação (operação não suportada).');
     campoDeExibicao.innerHTML = `erro ao fazer a operação.`
