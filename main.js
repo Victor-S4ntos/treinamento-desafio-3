@@ -110,10 +110,10 @@ botaoIgual.addEventListener("click", (e) => {
   campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
 });
 
-//função para exibir as teclas no display -----------------------------------------------------------------------------------
+//funções para exibir as teclas no display -----------------------------------------------------------------------------------
 function teclaParaOBotaoDeIgual (evento) {
   evento.preventDefault(); 
-  if(evento.key === "Enter") {
+  if(evento.key === "Enter" || evento.key === "=") {
     botaoIgual.click()
   }
 }
@@ -128,10 +128,15 @@ function adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
 }
 document.addEventListener("keydown", adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
 
-function adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado (evento) {
-
-  if(operadores.includes(evento.key)) {
-    campoDeExibicao.innerHTML += '  ' + evento.key + '  '
+function adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
+  if (operadores.includes(evento.key)) {
+    const conteudoCampo = campoDeExibicao.innerHTML.trim();
+    const ultimoCaractere = conteudoCampo.slice(-1);
+    if (operadores.includes(ultimoCaractere)) {
+      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + evento.key + '  ';
+    } else {
+      campoDeExibicao.innerHTML += '  ' + evento.key + '  ';
+    }
   }
 }
 document.addEventListener("keydown", adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
@@ -143,3 +148,11 @@ function apagarDigitoQuandoClicoEmBackspace (evento) {
   }
 }
 document.addEventListener("keydown", apagarDigitoQuandoClicoEmBackspace);
+
+function limparCampoQuandoClicoNoBotaoC (evento) {
+  evento.preventDefault()
+  if(evento.key === "c") {
+    botaoLimpar.click()
+  }
+}
+document.addEventListener("keydown", limparCampoQuandoClicoNoBotaoC);
