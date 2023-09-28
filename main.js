@@ -12,8 +12,8 @@ class Calculadora {
     this._operacao = operacao;
     this._valorB = valorB;
   }
-
-  //metodos para armazenar e atualizar os valores ------------------------------------------------
+  
+//metodos para armazenar e atualizar os valores -------------------------------------------------
   get valorA() {
     return this._valorA;
   }
@@ -47,14 +47,14 @@ class Calculadora {
         campoDeExibicao.innerHTML = `O número ${this._valorA} não pode ser divido por ${this._valorB}`
         setTimeout(() => {campoDeExibicao.innerHTML = `${this._valorA += '  ' + this._operacao+ '  '}`}, 1400);
       }else { return this._valorA / this._valorB }
-      default: throw new Error('faça uma operação');
+      default: throw new Error('Faça uma operação');
     }
   }
 }
 
 const campoDeExibicao = document.querySelector('.display');//campo do display da calculadora -----------------------
-const botoesOperadores = document.querySelectorAll('.operator');//botões de operação como: +, -, x e / --------------------------
-const botoesNumeradosEVirgula = document.querySelectorAll('.operator_');//botões de numeros do 0 ao 9 e a virgula(,) ---------------------------
+const botoesOperadores = document.querySelectorAll('.operador');//botões de operação como: +, -, x e / --------------------------
+const botoesNumeradosEVirgula = document.querySelectorAll('.operador_');//botões de numeros do 0 ao 9 e a virgula(,) ---------------------------
 const botaoIgual = document.getElementById('igual');//botão para exibir o resultado de toda a operação, o igual(=) ------------------------------------
 const aviso = document.querySelector('.aviso')
 
@@ -110,10 +110,10 @@ botaoIgual.addEventListener("click", (e) => {
   campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
 });
 
-//funções para exibir as teclas no display -----------------------------------------------------------------------------------
+// funções para exibir as teclas no display -------------------------------------------------
 function teclaParaOBotaoDeIgual (evento) {
   evento.preventDefault(); 
-  if(evento.key === "Enter" || evento.key === "=") {
+  if(evento.key === "Enter") {
     botaoIgual.click()
   }
 }
