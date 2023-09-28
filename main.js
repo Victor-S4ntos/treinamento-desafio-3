@@ -2,7 +2,7 @@ const operacoes = {
   ADICAO: '+',
   SUBTRACAO: '-',
   MULTIPLICACAO: 'x',
-  DIVISAO: '÷'
+  DIVISAO: '/'
 }
 
 // Classe Calculadora ---------------------------------------------------------------------------
@@ -47,7 +47,7 @@ class Calculadora {
         campoDeExibicao.innerHTML = `O número ${this._valorA} não pode ser divido por ${this._valorB}`
         setTimeout(() => {campoDeExibicao.innerHTML = `${this._valorA += '  ' + this._operacao+ '  '}`}, 1400);
       }else { return this._valorA / this._valorB }
-      default: if (this.valorA == undefined || this.valorB == undefined || this.operacao == undefined) { throw new Error('faça uma operação');}
+      default: throw new Error('faça uma operação');
     }
   }
 }
@@ -59,13 +59,13 @@ const botaoIgual = document.getElementById('igual');//botão para exibir o resul
 const aviso = document.querySelector('.aviso')
 
 //exbir no campo ------------------------------------------------------
-const operadores = ['+', '-', 'x', '÷'];
+const operadores = ['+', '-', 'x', '/'];
 botoesOperadores.forEach((botao) => {
   botao.addEventListener("click", () => {
     const conteudoCampo = campoDeExibicao.innerHTML.trim(); 
     const ultimoCaractere = conteudoCampo.slice(-1);
     if (operadores.includes(ultimoCaractere) && operadores.includes(botao.innerHTML)) {
-      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + botao.innerHTML + ' ' ;
+      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + botao.innerHTML + '  ' ;
     } else {
       campoDeExibicao.innerHTML += '  ' + botao.innerHTML + '  ';
     }
@@ -93,7 +93,7 @@ botaoLimpar.addEventListener("click", () => {campoDeExibicao.innerHTML = ""});
 //fazer o calculo e exibir resultado da conta ----------------------------------------------
 const calcular = new Calculadora();
 
-botaoIgual.addEventListener("click", () => {
+botaoIgual.addEventListener("click", (e) => {
   const operacao = campoDeExibicao.innerHTML.split('').find(operar => operadores.includes(operar));
   const [valorA, valorB] = campoDeExibicao.innerHTML.split(operacao).map(item => item.replace(',', '.'));
 
@@ -104,8 +104,42 @@ botaoIgual.addEventListener("click", () => {
   if(isNaN(calcular.conta())){
     console.log('erro ao fazer a operação (operação não suportada).');
     campoDeExibicao.innerHTML = `erro ao fazer a operação.`
-    setTimeout(()=> {campoDeExibicao.innerHTML = ''}, 1200);
+    setTimeout(() => {campoDeExibicao.innerHTML = ''}, 1200);
     return
   }else { console.log("Operação da conta:", valorA, operacao, valorB, "=", calcular.conta()); }
   campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
 });
+
+//função para exibir as teclas no display -----------------------------------------------------------------------------------
+function teclaParaOBotaoDeIgual (evento) {
+  evento.preventDefault(); 
+  if(evento.key === "Enter") {
+    botaoIgual.click()
+  }
+}
+document.addEventListener("keydown", teclaParaOBotaoDeIgual);
+
+function adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
+  const teclas = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ',']
+
+  if(teclas.includes(evento.key)) {
+    campoDeExibicao.innerHTML += evento.key
+  }
+}
+document.addEventListener("keydown", adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
+
+function adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado (evento) {
+
+  if(operadores.includes(evento.key)) {
+    campoDeExibicao.innerHTML += '  ' + evento.key + '  '
+  }
+}
+document.addEventListener("keydown", adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
+
+function apagarDigitoQuandoClicoEmBackspace (evento) {
+  evento.preventDefault()
+  if(evento.key === "Backspace") {
+    botaoApagarDigito.click()
+  }
+}
+document.addEventListener("keydown", apagarDigitoQuandoClicoEmBackspace);
