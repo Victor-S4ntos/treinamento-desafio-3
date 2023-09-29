@@ -95,6 +95,23 @@ button:hover {
     padding: 1em;
 }
 
+.apagar_console {
+    background-color: #4F709C;
+    background-image: url('./imagem/excluir(3).png'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 2.5rem; 
+    color: white;
+    justify-content: center;
+    text-align: center;
+    padding: 0; 
+    cursor: pointer;
+}
+
+.apagar_console:hover {
+    background-color: #51699b;
+}
+
 .apagar {
     background-color: orange;
     background-size: contain;

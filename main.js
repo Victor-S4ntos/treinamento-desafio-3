@@ -56,7 +56,6 @@ const campoDeExibicao = document.querySelector('.display');//campo do display da
 const botoesOperadores = document.querySelectorAll('.operador');//botões de operação como: +, -, x e / --------------------------
 const botoesNumeradosEVirgula = document.querySelectorAll('.operador_');//botões de numeros do 0 ao 9 e a virgula(,) ---------------------------
 const botaoIgual = document.getElementById('igual');//botão para exibir o resultado de toda a operação, o igual(=) ------------------------------------
-const aviso = document.querySelector('.aviso')
 
 //exbir no campo ------------------------------------------------------
 const operadores = ['+', '-', 'x', '/'];
@@ -90,6 +89,10 @@ botaoApagarDigito.addEventListener("click", () => {
 const botaoLimpar = document.getElementById('limpar');
 botaoLimpar.addEventListener("click", () => {campoDeExibicao.innerHTML = ""});
 
+//limpar console --------------------------------------------------------
+const apagarConsole = document.getElementById('apagarConsole');
+apagarConsole.addEventListener("click", () => console.clear());
+
 //fazer o calculo e exibir resultado da conta ----------------------------------------------
 const calcular = new Calculadora();
 
@@ -110,9 +113,9 @@ botaoIgual.addEventListener("click", (e) => {
   campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
 });
 
-// funções para exibir as teclas no display -------------------------------------------------
+// // funções para exibir as teclas no display -------------------------------------------------
 function teclaParaOBotaoDeIgual (evento) {
-  evento.preventDefault(); 
+  evento.preventDefault()
   if(evento.key === "Enter") {
     botaoIgual.click()
   }
@@ -151,8 +154,16 @@ document.addEventListener("keydown", apagarDigitoQuandoClicoEmBackspace);
 
 function limparCampoQuandoClicoNoBotaoC (evento) {
   evento.preventDefault()
-  if(evento.key === "c") {
+  if(evento.key === "c" || evento.key === "C") {
     botaoLimpar.click()
   }
 }
 document.addEventListener("keydown", limparCampoQuandoClicoNoBotaoC);
+
+function limparConsoleQuandoClicoNoBotao (evento) {
+  evento.preventDefault()
+  if(evento.key === "Delete") {
+    apagarConsole.click()
+  }
+}
+document.addEventListener("keydown", limparConsoleQuandoClicoNoBotao);
