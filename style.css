@@ -30,6 +30,7 @@ header h1 {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     width: 500px;
     text-align: center;
+    position: fixed;
 }
 
 .display {
@@ -43,6 +44,56 @@ header h1 {
     justify-content: center; 
     align-items: center; 
     overflow: hidden;
+    position: relative;
+}
+.historico {
+    color: white;
+    padding: 10px;
+    border-radius: 15px 15px 15px 15px;
+    max-height: 150px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 55em;
+    margin-bottom: 30em;
+}
+
+#historico-span .historico-span-imagem {
+    width: 30px;
+    height: 30px;
+}
+#historico-span img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 5px;
+    cursor: pointer;
+    padding-top: .6em;
+}
+
+#historico-lista  {
+   
+    font-size: 1.2rem;
+    height: 100%;
+    list-style: none;
+    display: none;
+}
+
+.historico-label {
+    cursor: pointer;
+}
+
+.caixaDoHistorico:checked ~ #historico-lista {
+    display: block;
+}
+
+.caixaDoHistorico {
+    display: none;
+}
+
+#historico-span .historico-span-imagem {
+    width: 40px; 
+    height: 40px; 
 }
 
 .buttons {

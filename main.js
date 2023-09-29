@@ -56,6 +56,8 @@ const campoDeExibicao = document.querySelector('.display');//campo do display da
 const botoesOperadores = document.querySelectorAll('.operador');//botões de operação como: +, -, x e / --------------------------
 const botoesNumeradosEVirgula = document.querySelectorAll('.operador_');//botões de numeros do 0 ao 9 e a virgula(,) ---------------------------
 const botaoIgual = document.getElementById('igual');//botão para exibir o resultado de toda a operação, o igual(=) ------------------------------------
+const span = document.getElementById('historico-span')
+const listaDasOperacoes = document.getElementById('historico-lista')
 
 //exbir no campo ------------------------------------------------------
 const operadores = ['+', '-', 'x', '/'];
@@ -91,29 +93,38 @@ botaoLimpar.addEventListener("click", () => {campoDeExibicao.innerHTML = ""});
 
 //limpar console --------------------------------------------------------
 const apagarConsole = document.getElementById('apagarConsole');
-apagarConsole.addEventListener("click", () => console.clear());
+apagarConsole.addEventListener("click", () => {
+  console.clear()
+  listaDasOperacoes.innerHTML = ''
+});
 
-//fazer o calculo e exibir resultado da conta ----------------------------------------------
+//fazer o calculo e exibir resultado da conta e exibir no historico ----------------------------------------------
 const calcular = new Calculadora();
 
-botaoIgual.addEventListener("click", (e) => {
+
+botaoIgual.addEventListener("click", () => {
   const operacao = campoDeExibicao.innerHTML.split('').find(operar => operadores.includes(operar));
   const [valorA, valorB] = campoDeExibicao.innerHTML.split(operacao).map(item => item.replace(',', '.'));
 
-  calcular.valorA = parseFloat(valorA);
-  calcular.operacao = operacao;
-  calcular.valorB = parseFloat(valorB);
+calcular.valorA = parseFloat(valorA);
+calcular.operacao = operacao;
+calcular.valorB = parseFloat(valorB);
 
   if(isNaN(calcular.conta())){
     console.log('erro ao fazer a operação (operação não suportada).');
     campoDeExibicao.innerHTML = `erro ao fazer a operação.`
     setTimeout(() => {campoDeExibicao.innerHTML = ''}, 1200);
     return
-  }else { console.log("Operação da conta:", valorA, operacao, valorB, "=", calcular.conta()); }
+  }else { console.log("Operação da conta:", valorA, operacao, valorB, "=", calcular.conta()); 
+  const elementoLista = document.createElement('li')
+  listaDasOperacoes.innerHTML += elementoLista.innerHTML
+  elementoLista.innerHTML = `${valorA}  ${operacao}  ${valorB} = ${calcular.conta()}`
+  listaDasOperacoes.appendChild(elementoLista)}
+
   campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
 });
 
-// // funções para exibir as teclas no display -------------------------------------------------
+// funções para exibir as teclas no display quando digito no teclado --------------------------------------------------
 function teclaParaOBotaoDeIgual (evento) {
   evento.preventDefault()
   if(evento.key === "Enter") {
