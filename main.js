@@ -178,3 +178,20 @@ function limparConsoleQuandoClicoNoBotao (evento) {
   }
 }
 document.addEventListener("keydown", limparConsoleQuandoClicoNoBotao);
+
+//exibir historico ------------------------------------------------------- 
+
+document.addEventListener("DOMContentLoaded", function() {
+  const menuCheckbox = document.getElementById("menu");
+  const listaHistorico = document.querySelector(".lista");
+
+  // Adicione um ouvinte de evento de mudança ao input checkbox
+  menuCheckbox.addEventListener("change", function() {
+    // Verifique se o checkbox está marcado para decidir se a lista deve ser exibida
+    if (menuCheckbox.checked) {
+      listaHistorico.style.display = "block";
+    } else {
+      listaHistorico.style.display = "none";
+    }
+  });
+});
