@@ -47,7 +47,9 @@ header h1 {
     align-items: center;
     overflow: hidden;
     position: relative;
+    max-height: 100px;
 }
+
 
 .historico {
 
@@ -55,11 +57,6 @@ header h1 {
     margin-left: 15em;
     position: fixed;
 
-}
-
-.historico-label {
-
-    position: fixed;
 }
 
 .historico-span-imagem {
@@ -72,6 +69,7 @@ header h1 {
 .historico-label {
     margin-left: 5em;
     cursor: pointer;
+    position: fixed;
 }
 
 .lista {
@@ -84,18 +82,18 @@ header h1 {
     right: 10px; 
     text-align: center;
     display: none;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .historico-titulo {
     font-family: 'Open Sans', sans-serif;
+    padding: 0;
 }
 
 #historico-lista {
     list-style: none;
-}
-
-#menu:checked ~ .lista { 
-    display: block;
+    padding: 0;
 }
 
 .caixaDoHistorico {
@@ -106,7 +104,8 @@ li {
     color: white;
     font-size: 1.5em;
     word-wrap: break-word;
-    padding-bottom: .3em;
+    padding-bottom: .4em;
+    max-width: 250px;
 }
 
 .buttons {
@@ -161,7 +160,7 @@ button:hover {
 
 .apagar_console {
     background-color: #4F709C;
-    background-image: url('./imagem/excluir(3).png');
+    background-image: url('./imagens/excluir\(3\).png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 2.5rem;

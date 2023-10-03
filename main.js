@@ -3,146 +3,169 @@ const operacoes = {
   SUBTRACAO: '-',
   MULTIPLICACAO: 'x',
   DIVISAO: '/'
-}
+};
 
-// Classe Calculadora ---------------------------------------------------------------------------
+const operadores = ['+', '-', 'x', '/'];
+
 class Calculadora {
-  constructor(valorA, operacao, valorB) {
-    this._valorA = valorA;
-    this._operacao = operacao;
-    this._valorB = valorB;
+  constructor() {
+    this._pilha = [];
   }
+
+  get pilha() {
+    return this._pilha;
+  }
+
+  adicionaValor(valor) {
+    this._pilha.push(valor);
+  }
+
+  adicionaOperacao(operacao) {
+    this._pilha.push(operacao);
+  }
+
+  calculo() {
+    const pilha = this._pilha;
+    const valores = [];
+    const operacoes = [];
   
-//metodos para armazenar e atualizar os valores -------------------------------------------------
-  get valorA() {
-    return this._valorA;
+    for (const item of pilha) {
+      if (operadores.includes(item)) {
+        while (operacoes.length > 0 && this.prioridade(operacoes[operacoes.length - 1]) >= this.prioridade(item)) {
+          const operacao = operacoes.pop();
+          const valor2 = valores.pop();
+          const valor1 = valores.pop();
+          const resultado = this.aplicarOperacao(valor1, valor2, operacao);
+          valores.push(resultado);
+        }
+        operacoes.push(item);
+      } else {
+        valores.push(parseFloat(item));
+      }
+    }
+  
+    while (operacoes.length > 0) {
+      const valor1 = valores.pop();
+      const operacao = operacoes.pop();
+      const valor2 = valores.pop();
+      valores.push( this.aplicarOperacao(valor1, valor2, operacao));
+    }
+    console.log(pilha)
+  
+    if (valores.length !== 1 || operacoes.length !== 0) {
+      throw new Error('Erro na expressão');
+    }
+  
+    this._pilha = [valores[0].toString()];
+    return valores[0].toString();
   }
 
-  set valorA(valor) {
-    this._valorA = valor;
+  prioridade(operacao) {
+    if (operacao === '+' || operacao === '-') return 1;
+    if (operacao === 'x' || operacao === '/') return 2;
+    return 0;
   }
 
-  get operacao() {
-    return this._operacao;
-  }
-
-  set operacao(operacao) {
-    this._operacao = operacao;
-  }
-
-  get valorB() {
-    return this._valorB;
-  }
-
-  set valorB(valor) {
-    this._valorB = valor;
-  }
-
-  conta() {
-    switch(this._operacao) {
-      case operacoes.ADICAO: return this._valorA + this._valorB
-      case operacoes.SUBTRACAO: return this._valorA - this._valorB
-      case operacoes.MULTIPLICACAO: return this._valorA * this._valorB
-      case operacoes.DIVISAO: if(this._valorB === 0) {
-        campoDeExibicao.innerHTML = `O número ${this._valorA} não pode ser divido por ${this._valorB}`
-        setTimeout(() => {campoDeExibicao.innerHTML = `${this._valorA += '  ' + this._operacao+ '  '}`}, 1400);
-      }else { return this._valorA / this._valorB }
-      default: throw new Error('Faça uma operação');
+  aplicarOperacao(valor1, valor2, operacao) {
+    switch (operacao) {
+      case '+':
+        return valor1 + valor2;
+      case '-':
+        return valor1 - valor2;
+      case 'x':
+        return valor1 * valor2;
+      case '/':
+        if (valor2 === 0) {
+          campoDeExibicao.innerHTML = `O número ${valor1} não pode ser dividio por ${valor2}`
+          setTimeout(() => {campoDeExibicao.innerHTML = `${valor1 += '  ' +operacao+ '  '}`}, 1400)
+        }
+        return valor1 / valor2;
+      default:
+        console.error('Operação inválida');
     }
   }
 }
 
-const campoDeExibicao = document.querySelector('.display');//campo do display da calculadora -----------------------
-const botoesOperadores = document.querySelectorAll('.operador');//botões de operação como: +, -, x e / --------------------------
-const botoesNumeradosEVirgula = document.querySelectorAll('.operador_');//botões de numeros do 0 ao 9 e a virgula(,) ---------------------------
-const botaoIgual = document.getElementById('igual');//botão para exibir o resultado de toda a operação, o igual(=) ------------------------------------
-const span = document.getElementById('historico-span')
-const listaDasOperacoes = document.getElementById('historico-lista')
+const calcular = new Calculadora();//minha instancia ---------------------------------------------
 
-//exbir no campo ------------------------------------------------------
-const operadores = ['+', '-', 'x', '/'];
-botoesOperadores.forEach((botao) => {
-  botao.addEventListener("click", () => {
+const campoDeExibicao = document.querySelector('.display');
+const botaoIgual = document.getElementById('igual');
+const botaoApagarDigito = document.getElementById('apagar');
+const botaoLimpar = document.getElementById('limpar');
+const botaoLimparHistoricos = document.getElementById('apagarConsole')
+const listaDasOperacoes = document.getElementById('historico-lista');
+const botoesOperadores = document.querySelectorAll('.operador');
+const botoesNumerados = document.querySelectorAll('.operador_');
+
+botoesNumerados.forEach(botoes => {
+  botoes.addEventListener('click', () => {
+    campoDeExibicao.innerHTML += botoes.innerHTML
+  })
+})
+
+botoesOperadores.forEach(botoes => {
+  botoes.addEventListener('click', () => {
     const conteudoCampo = campoDeExibicao.innerHTML.trim(); 
     const ultimoCaractere = conteudoCampo.slice(-1);
-    if (operadores.includes(ultimoCaractere) && operadores.includes(botao.innerHTML)) {
-      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + botao.innerHTML + '  ' ;
+    if (operadores.includes(ultimoCaractere) && operadores.includes(botoes.innerHTML)) {
+      campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + botoes.innerHTML + '  ' ;
     } else {
-      campoDeExibicao.innerHTML += '  ' + botao.innerHTML + '  ';
+      campoDeExibicao.innerHTML += '  ' + botoes.innerHTML + '  ';
     }
-  });
-});
-
-botoesNumeradosEVirgula.forEach((botao) => {
-  botao.addEventListener("click", () => {
-    campoDeExibicao.innerHTML += botao.innerHTML;
-  });
-});
-
-//apagar digito --------------------------------------------------------
-const botaoApagarDigito = document.getElementById('apagar');
-botaoApagarDigito.addEventListener("click", () => {
-  if (campoDeExibicao.innerHTML.length > 0) {
-    campoDeExibicao.innerHTML = campoDeExibicao.innerHTML.slice(0, -1);
-  }
-});
-
-//limpar campo ----------------------------------------------------------
-const botaoLimpar = document.getElementById('limpar');
-botaoLimpar.addEventListener("click", () => {campoDeExibicao.innerHTML = ""});
-
-//limpar console --------------------------------------------------------
-const apagarConsole = document.getElementById('apagarConsole');
-apagarConsole.addEventListener("click", () => {
-  console.clear()
-  listaDasOperacoes.innerHTML = ''
-});
-
-//fazer o calculo e exibir resultado da conta e exibir no historico ----------------------------------------------
-const calcular = new Calculadora();
-
+  })
+})
 
 botaoIgual.addEventListener("click", () => {
-  const operacao = campoDeExibicao.innerHTML.split('').find(operar => operadores.includes(operar));
-  const [valorA, valorB] = campoDeExibicao.innerHTML.split(operacao).map(item => item.replace(',', '.'));
 
-calcular.valorA = parseFloat(valorA);
-calcular.operacao = operacao;
-calcular.valorB = parseFloat(valorB);
+    const expressao = campoDeExibicao.innerHTML.replace(',', '.');
+    const partes = expressao.split(/(\+|-|x|\/)/).map(item => item.trim()).filter(Boolean);
 
-  if(isNaN(calcular.conta())){
-    console.log('erro ao fazer a operação (operação não suportada).');
-    campoDeExibicao.innerHTML = `erro ao fazer a operação.`
-    setTimeout(() => {campoDeExibicao.innerHTML = ''}, 1200);
-    return
-  }else { console.log("Operação da conta:", valorA, operacao, valorB, "=", calcular.conta()); 
-  const elementoLista = document.createElement('li')
-  listaDasOperacoes.innerHTML += elementoLista.innerHTML
-  elementoLista.innerHTML = `${valorA}  ${operacao}  ${valorB} = ${calcular.conta()}`
-  listaDasOperacoes.appendChild(elementoLista)}
+    calcular.pilha.length = 0;
 
-  campoDeExibicao.innerHTML = calcular.conta().toString().replace('.', ',');
+    for (const item of partes) {
+      if (operadores.includes(item)) {
+        calcular.adicionaOperacao(item);
+      } else {
+        calcular.adicionaValor(item);
+      }
+    }
+
+    const resultado = calcular.calculo();
+
+    if(isNaN(resultado) || resultado === Infinity) {
+      campoDeExibicao.innerHTML = 'Erro ao fazer a operação'
+      setTimeout(()=> {campoDeExibicao.innerHTML = ''}, 1200)
+    }else { 
+      // const elementoLista = document.createElement('li');
+      // listaDasOperacoes.innerHTML += elementoLista.innerHTML
+      // elementoLista.innerHTML = `${expressao} = ${resultado}`;
+      // listaDasOperacoes.appendChild(elementoLista);
+      // console.log('resultado da operação:', expressao, '=', resultado)
+    }
 });
 
-// funções para exibir as teclas no display quando digito no teclado --------------------------------------------------
-function teclaParaOBotaoDeIgual (evento) {
-  evento.preventDefault()
-  if(evento.key === "Enter") {
-    botaoIgual.click()
+botaoApagarDigito.addEventListener("click", () => {
+  const expressao = campoDeExibicao.innerHTML;
+  campoDeExibicao.innerHTML = expressao.slice(0, -1);
+});
+
+botaoLimpar.addEventListener("click", () => {
+  campoDeExibicao.innerHTML = "";
+});
+
+botaoLimparHistoricos.addEventListener("click", () => {
+  console.clear(), listaDasOperacoes.innerHTML = ''
+})
+
+//funções para exibir no display quando digito no teclado --------------------------------------------------
+document.addEventListener("keydown", (evento) => {
+  if (evento.key === "Enter") {
+    botaoIgual.click();
   }
-}
-document.addEventListener("keydown", teclaParaOBotaoDeIgual);
-
-function adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
-  const teclas = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ',']
-
-  if(teclas.includes(evento.key)) {
-    campoDeExibicao.innerHTML += evento.key
+  const teclas = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ','];
+  if (teclas.includes(evento.key)) {
+    campoDeExibicao.innerHTML += evento.key;
   }
-}
-document.addEventListener("keydown", adicionarNumeroNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
-
-function adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
   if (operadores.includes(evento.key)) {
     const conteudoCampo = campoDeExibicao.innerHTML.trim();
     const ultimoCaractere = conteudoCampo.slice(-1);
@@ -152,46 +175,31 @@ function adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado(evento) {
       campoDeExibicao.innerHTML += '  ' + evento.key + '  ';
     }
   }
-}
-document.addEventListener("keydown", adicionarOperadorNoDisplayQuandoClicoEmUmaTeclaDoTeclado);
-
-function apagarDigitoQuandoClicoEmBackspace (evento) {
-  evento.preventDefault()
-  if(evento.key === "Backspace") {
-    botaoApagarDigito.click()
+  if (evento.key === "Backspace") {
+    botaoApagarDigito.click();
   }
-}
-document.addEventListener("keydown", apagarDigitoQuandoClicoEmBackspace);
-
-function limparCampoQuandoClicoNoBotaoC (evento) {
-  evento.preventDefault()
-  if(evento.key === "c" || evento.key === "C") {
-    botaoLimpar.click()
+  if (evento.key === "c" || evento.key === "C") {
+    botaoLimpar.click();
   }
-}
-document.addEventListener("keydown", limparCampoQuandoClicoNoBotaoC);
+  if (evento.key === "Delete") {
+    apagarConsole.click();
+  }
+});
 
-function limparConsoleQuandoClicoNoBotao (evento) {
-  evento.preventDefault()
+document.addEventListener("keydown", (evento)=> {
   if(evento.key === "Delete") {
-    apagarConsole.click()
+    botaoLimparHistoricos.click()
   }
-}
-document.addEventListener("keydown", limparConsoleQuandoClicoNoBotao);
+})
 
-//exibir historico ------------------------------------------------------- 
+//exibir historico ---------------------------------------------------------
+const menuCheckbox = document.getElementById("menu");
+const listaHistorico = document.querySelector(".lista");
 
-document.addEventListener("DOMContentLoaded", function() {
-  const menuCheckbox = document.getElementById("menu");
-  const listaHistorico = document.querySelector(".lista");
-
-  // Adicione um ouvinte de evento de mudança ao input checkbox
-  menuCheckbox.addEventListener("change", function() {
-    // Verifique se o checkbox está marcado para decidir se a lista deve ser exibida
-    if (menuCheckbox.checked) {
-      listaHistorico.style.display = "block";
-    } else {
-      listaHistorico.style.display = "none";
-    }
-  });
+menuCheckbox.addEventListener("change", function() {
+  if (menuCheckbox.checked) {
+    listaHistorico.style.display = "block";
+  } else {
+    listaHistorico.style.display = "none";
+  }
 });
