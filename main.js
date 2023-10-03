@@ -28,37 +28,42 @@ class Calculadora {
     const pilha = this._pilha;
     const valores = [];
     const operacoes = [];
-  
+
     for (const item of pilha) {
-      if (operadores.includes(item)) {
-        while (operacoes.length > 0 && this.prioridade(operacoes[operacoes.length - 1]) >= this.prioridade(item)) {
-          const operacao = operacoes.pop();
-          const valor2 = valores.pop();
-          const valor1 = valores.pop();
-          const resultado = this.aplicarOperacao(valor1, valor2, operacao);
-          valores.push(resultado);
-        }
-        operacoes.push(item);
-      } else {
-        valores.push(parseFloat(item));
+        if (operadores.includes(item)) {
+            if (operacoes.length === 0 || this.prioridade(item) > this.prioridade(operacoes[operacoes.length - 1])) {
+                operacoes.push(item);
+            } else {
+                while (operacoes.length > 0 && this.prioridade(operacoes[operacoes.length - 1]) >= this.prioridade(item)) {
+                    const operacao = operacoes.pop();
+                    const valor2 = valores.pop();
+                    const valor1 = valores.pop();
+                    valores.push(this.aplicarOperacao(valor1, valor2, operacao));
+                }
+                operacoes.push(item);
+            }
+        } else {
+          valores.push(parseFloat(item));
       }
     }
-  
+
     while (operacoes.length > 0) {
-      const valor1 = valores.pop();
-      const operacao = operacoes.pop();
-      const valor2 = valores.pop();
-      valores.push( this.aplicarOperacao(valor1, valor2, operacao));
+        const operacao = operacoes.pop();
+        const valor2 = valores.pop();
+        const valor1 = valores.pop();
+        valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
     console.log(pilha)
-  
+
     if (valores.length !== 1 || operacoes.length !== 0) {
-      throw new Error('Erro na expressão');
+        console.error('Erro na expressão');
+        return 'Erro';
     }
-  
+
     this._pilha = [valores[0].toString()];
     return valores[0].toString();
-  }
+}
+
 
   prioridade(operacao) {
     if (operacao === '+' || operacao === '-') return 1;
@@ -76,12 +81,10 @@ class Calculadora {
         return valor1 * valor2;
       case '/':
         if (valor2 === 0) {
-          campoDeExibicao.innerHTML = `O número ${valor1} não pode ser dividio por ${valor2}`
-          setTimeout(() => {campoDeExibicao.innerHTML = `${valor1 += '  ' +operacao+ '  '}`}, 1400)
-        }
-        return valor1 / valor2;
+          campoDeExibicao.innerHTML =  `O número ${valor1} não pode ser dividido por ${valor2}`
+        } else {return valor1 / valor2;}
       default:
-        console.error('Operação inválida');
+       console.error('Operação inválida');
     }
   }
 }
@@ -117,7 +120,7 @@ botoesOperadores.forEach(botoes => {
 
 botaoIgual.addEventListener("click", () => {
 
-    const expressao = campoDeExibicao.innerHTML.replace(',', '.');
+    const expressao = campoDeExibicao.innerHTML.replace(',', '.')
     const partes = expressao.split(/(\+|-|x|\/)/).map(item => item.trim()).filter(Boolean);
 
     calcular.pilha.length = 0;
@@ -135,13 +138,16 @@ botaoIgual.addEventListener("click", () => {
     if(isNaN(resultado) || resultado === Infinity) {
       campoDeExibicao.innerHTML = 'Erro ao fazer a operação'
       setTimeout(()=> {campoDeExibicao.innerHTML = ''}, 1200)
+      return
     }else { 
-      // const elementoLista = document.createElement('li');
-      // listaDasOperacoes.innerHTML += elementoLista.innerHTML
-      // elementoLista.innerHTML = `${expressao} = ${resultado}`;
-      // listaDasOperacoes.appendChild(elementoLista);
-      // console.log('resultado da operação:', expressao, '=', resultado)
+      const elementoLista = document.createElement('li');
+      listaDasOperacoes.innerHTML += elementoLista.innerHTML
+      elementoLista.innerHTML = `${expressao} = ${resultado}`;
+      listaDasOperacoes.appendChild(elementoLista);
+      console.log('resultado da operação:', expressao.replace('.', ','), '=', resultado.replace('.', ','))
     }
+
+    campoDeExibicao.innerHTML = resultado.toString().replace('.', ',')
 });
 
 botaoApagarDigito.addEventListener("click", () => {
