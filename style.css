@@ -66,6 +66,10 @@ header h1 {
 
 }
 
+.historico-span {
+    position: fixed;
+}
+
 .historico-label {
     margin-left: 5em;
     cursor: pointer;
@@ -213,4 +217,14 @@ footer h2 {
         font-size: 20px;
         padding: 15px;
     }
+
+    .lista {
+        margin-top: 30em;
+        position: relative;
+    }
+
+    img {
+        margin-top: 3em;
+    }
+   
 }

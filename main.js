@@ -40,7 +40,6 @@ class Calculadora {
           valores.push(this.aplicarOperacao(valor1, valor2, operacao));
         }
         operacoes.push(item);
-        console.log(item)
       }
     });
 
@@ -50,9 +49,8 @@ class Calculadora {
       const valor1 = valores.pop();
       valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
-    this._pilha = [valores[0].toString()];
-    console.log(pilha,valores,operacoes)
-    return valores[0].toString();
+    this._pilha = [valores.toString()];
+    return valores.toString();
   }
 
   aplicarOperacao(valor1, valor2, operacao) {
@@ -66,6 +64,7 @@ class Calculadora {
       case enumeradorDasOperacoes.DIVISAO:
         if (valor2 === 0) {
           campoDeExibicao.innerHTML =  `O número ${valor1} não pode ser dividido por ${valor2}`
+          setTimeout(() => {campoDeExibicao.innerHTML = `${valor1 + '  ' + operacao + '  '}`},1400)
         } else {return valor1 / valor2;}
       default:
        console.error('Operação inválida');
@@ -92,20 +91,20 @@ botoesNumerados.forEach(botoes => {
     }
     
     campoDeExibicao.innerHTML += botoes.innerHTML
-  })
-})
+  });
+});
 
 botoesOperadores.forEach(botoes => {
   botoes.addEventListener('click', () => {
     const conteudoCampo = campoDeExibicao.innerHTML.trim(); 
     const ultimoCaractere = conteudoCampo.slice(-1);
-    if (operadores.includes(ultimoCaractere) && operadores.includes(botoes.innerHTML)) {
+    if (operadores.includes(ultimoCaractere)) {
       campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + botoes.innerHTML + '  ' ;
     } else {
       campoDeExibicao.innerHTML += '  ' + botoes.innerHTML + '  ';
     }
-  })
-})
+  });
+});
 
 botaoIgual.addEventListener("click", () => {
 
