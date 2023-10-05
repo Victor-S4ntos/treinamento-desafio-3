@@ -1,4 +1,4 @@
-const operacoes = {
+const enumeradorDasOperacoes = {
   ADICAO: '+',
   SUBTRACAO: '-',
   MULTIPLICACAO: 'x',
@@ -12,12 +12,12 @@ class Calculadora {
     this._pilha = [];
   }
 
-  get pilha() {
+  obterPilha() {
     return this._pilha;
   }
 
   adicionaValor(valor) {
-    this._pilha.push(valor);
+    this._pilha.push(parseFloat(valor.replace(',', '.')));
   }
 
   adicionaOperacao(operacao) {
@@ -29,57 +29,41 @@ class Calculadora {
     const valores = [];
     const operacoes = [];
 
-    for (const item of pilha) {
-        if (operadores.includes(item)) {
-            if (operacoes.length === 0 || this.prioridade(item) > this.prioridade(operacoes[operacoes.length - 1])) {
-                operacoes.push(item);
-            } else {
-                while (operacoes.length > 0 && this.prioridade(operacoes[operacoes.length - 1]) >= this.prioridade(item)) {
-                    const operacao = operacoes.pop();
-                    const valor2 = valores.pop();
-                    const valor1 = valores.pop();
-                    valores.push(this.aplicarOperacao(valor1, valor2, operacao));
-                }
-                operacoes.push(item);
-            }
-        } else {
-          valores.push(parseFloat(item));
+    pilha.forEach((item) => {
+      if (typeof item === 'number') {
+        valores.push(item);
+      } else if (operadores.includes(item)) {
+        while (operacoes.length > 0 && operadores.indexOf(operacoes[operacoes.length - 1]) >= operadores.indexOf(item)) {
+          const operacao = operacoes.pop();
+          const valor2 = valores.pop();
+          const valor1 = valores.pop();
+          valores.push(this.aplicarOperacao(valor1, valor2, operacao));
+        }
+        operacoes.push(item);
+        console.log(item)
       }
-    }
+    });
 
     while (operacoes.length > 0) {
-        const operacao = operacoes.pop();
-        const valor2 = valores.pop();
-        const valor1 = valores.pop();
-        valores.push(this.aplicarOperacao(valor1, valor2, operacao));
+      const operacao = operacoes.pop();
+      const valor2 = valores.pop();
+      const valor1 = valores.pop();
+      valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
-    console.log(pilha)
-
-    if (valores.length !== 1 || operacoes.length !== 0) {
-        console.error('Erro na expressão');
-        return 'Erro';
-    }
-
     this._pilha = [valores[0].toString()];
+    console.log(pilha,valores,operacoes)
     return valores[0].toString();
-}
-
-
-  prioridade(operacao) {
-    if (operacao === '+' || operacao === '-') return 1;
-    if (operacao === 'x' || operacao === '/') return 2;
-    return 0;
   }
 
   aplicarOperacao(valor1, valor2, operacao) {
     switch (operacao) {
-      case '+':
+      case enumeradorDasOperacoes.ADICAO:
         return valor1 + valor2;
-      case '-':
+      case enumeradorDasOperacoes.SUBTRACAO:
         return valor1 - valor2;
-      case 'x':
+      case enumeradorDasOperacoes.MULTIPLICACAO:
         return valor1 * valor2;
-      case '/':
+      case enumeradorDasOperacoes.DIVISAO:
         if (valor2 === 0) {
           campoDeExibicao.innerHTML =  `O número ${valor1} não pode ser dividido por ${valor2}`
         } else {return valor1 / valor2;}
@@ -102,6 +86,11 @@ const botoesNumerados = document.querySelectorAll('.operador_');
 
 botoesNumerados.forEach(botoes => {
   botoes.addEventListener('click', () => {
+
+    if(campoDeExibicao.innerHTML.slice(-1) === ',' && botoes.innerHTML === ',') {
+      return
+    }
+    
     campoDeExibicao.innerHTML += botoes.innerHTML
   })
 })
@@ -123,16 +112,15 @@ botaoIgual.addEventListener("click", () => {
     const expressao = campoDeExibicao.innerHTML.replace(',', '.')
     const partes = expressao.split(/(\+|-|x|\/)/).map(item => item.trim()).filter(Boolean);
 
-    calcular.pilha.length = 0;
+    calcular.obterPilha()
 
-    for (const item of partes) {
+    partes.forEach((item) => {
       if (operadores.includes(item)) {
         calcular.adicionaOperacao(item);
       } else {
         calcular.adicionaValor(item);
       }
-    }
-
+    })
     const resultado = calcular.calculo();
 
     if(isNaN(resultado) || resultado === Infinity) {
@@ -142,7 +130,7 @@ botaoIgual.addEventListener("click", () => {
     }else { 
       const elementoLista = document.createElement('li');
       listaDasOperacoes.innerHTML += elementoLista.innerHTML
-      elementoLista.innerHTML = `${expressao} = ${resultado}`;
+      elementoLista.innerHTML = `${expressao.replace('.', ',')} = ${resultado.replace('.', ',')}`;
       listaDasOperacoes.appendChild(elementoLista);
       console.log('resultado da operação:', expressao.replace('.', ','), '=', resultado.replace('.', ','))
     }
@@ -156,7 +144,7 @@ botaoApagarDigito.addEventListener("click", () => {
 });
 
 botaoLimpar.addEventListener("click", () => {
-  campoDeExibicao.innerHTML = "";
+  campoDeExibicao.innerHTML = '';
 });
 
 botaoLimparHistoricos.addEventListener("click", () => {
@@ -202,7 +190,7 @@ document.addEventListener("keydown", (evento)=> {
 const menuCheckbox = document.getElementById("menu");
 const listaHistorico = document.querySelector(".lista");
 
-menuCheckbox.addEventListener("change", function() {
+menuCheckbox.addEventListener("click", () => {
   if (menuCheckbox.checked) {
     listaHistorico.style.display = "block";
   } else {
