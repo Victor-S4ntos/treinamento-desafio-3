@@ -49,8 +49,8 @@ class Calculadora {
       const valor1 = valores.pop();
       valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
-    this._pilha = [valores.toString()];
-    return valores.toString();
+    this._pilha = [valores[0].toString()];
+    return valores[0].toString();
   }
 
   aplicarOperacao(valor1, valor2, operacao) {
@@ -82,6 +82,7 @@ const botaoLimparHistoricos = document.getElementById('apagarConsole')
 const listaDasOperacoes = document.getElementById('historico-lista');
 const botoesOperadores = document.querySelectorAll('.operador');
 const botoesNumerados = document.querySelectorAll('.operador_');
+const botaoMaisMenos = document.getElementById('maisMenos')
 
 botoesNumerados.forEach(botoes => {
   botoes.addEventListener('click', () => {
@@ -89,7 +90,6 @@ botoesNumerados.forEach(botoes => {
     if(campoDeExibicao.innerHTML.slice(-1) === ',' && botoes.innerHTML === ',') {
       return
     }
-    
     campoDeExibicao.innerHTML += botoes.innerHTML
   });
 });
@@ -105,6 +105,19 @@ botoesOperadores.forEach(botoes => {
     }
   });
 });
+
+botaoMaisMenos.addEventListener('click', () => {
+  if (campoDeExibicao.innerHTML.length === '') {
+    return
+  }
+  if (campoDeExibicao.innerHTML === '-') {
+    campoDeExibicao.innerHTML = campoDeExibicao.innerHTML.substring(1);
+  } else if (campoDeExibicao.innerHTML.startsWith('-')) {
+    campoDeExibicao.innerHTML = campoDeExibicao.innerHTML.substring(1);
+  } else {
+    campoDeExibicao.innerHTML = '-' + '  ' + campoDeExibicao.innerHTML;
+  }
+})
 
 botaoIgual.addEventListener("click", () => {
 
@@ -166,8 +179,9 @@ document.addEventListener("keydown", (evento) => {
       campoDeExibicao.innerHTML = conteudoCampo.slice(0, -1) + evento.key + '  ';
     } else {
       campoDeExibicao.innerHTML += '  ' + evento.key + '  ';
-    }
+    }    
   }
+
   if (evento.key === "Backspace") {
     botaoApagarDigito.click();
   }
