@@ -166,7 +166,7 @@ button:hover {
 
 .apagar_console {
     background-color: #4F709C;
-    background-image: url('./imagens/excluir\(3\).png');
+    background-image: url('./imagens/delete-left-solid.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 2.5rem;
@@ -207,6 +207,12 @@ footer h2 {
     color: white;
 }
 
+button.limpar,
+button.apagar {
+    font-size: 28px; 
+}
+
+
 @media screen and (max-width: 600px) {
     .calculator {
         width: 90%;
@@ -223,7 +229,7 @@ footer h2 {
 
     .lista {
         margin-top: 38em;
-        margin-right: 9em;
+        margin-right: 2.5em;
         position: relative;
         position: fixed;
     }

@@ -49,6 +49,7 @@ class Calculadora {
       const valor1 = valores.pop();
       valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
+    console.log(pilha)
     this._pilha = [valores[0].toString()];
     return valores[0].toString();
   }
@@ -82,12 +83,11 @@ const botaoLimparHistoricos = document.getElementById('apagarConsole')
 const listaDasOperacoes = document.getElementById('historico-lista');
 const botoesOperadores = document.querySelectorAll('.operador');
 const botoesNumerados = document.querySelectorAll('.operador_');
-const botaoMaisMenos = document.getElementById('maisMenos')
 
 botoesNumerados.forEach(botoes => {
   botoes.addEventListener('click', () => {
 
-    if(campoDeExibicao.innerHTML.slice(-1) === ',' && botoes.innerHTML === ',') {
+    if(campoDeExibicao.innerHTML.trim().slice(-1) === ',' && botoes.innerHTML === ',') {
       return
     }
     campoDeExibicao.innerHTML += botoes.innerHTML
@@ -106,48 +106,31 @@ botoesOperadores.forEach(botoes => {
   });
 });
 
-botaoMaisMenos.addEventListener('click', () => {
-  if (campoDeExibicao.innerHTML.length === '') {
-    return
-  }
-  if (campoDeExibicao.innerHTML === '-') {
-    campoDeExibicao.innerHTML = campoDeExibicao.innerHTML.substring(1);
-  } else if (campoDeExibicao.innerHTML.startsWith('-')) {
-    campoDeExibicao.innerHTML = campoDeExibicao.innerHTML.substring(1);
-  } else {
-    campoDeExibicao.innerHTML = '-' + '  ' + campoDeExibicao.innerHTML;
-  }
-})
-
 botaoIgual.addEventListener("click", () => {
-
-    const expressao = campoDeExibicao.innerHTML.replace(',', '.')
-    const partes = expressao.split(/(\+|-|x|\/)/).map(item => item.trim()).filter(Boolean);
-
-    calcular.obterPilha()
-
-    partes.forEach((item) => {
-      if (operadores.includes(item)) {
-        calcular.adicionaOperacao(item);
-      } else {
-        calcular.adicionaValor(item);
-      }
-    })
-    const resultado = calcular.calculo();
-
-    if(isNaN(resultado) || resultado === Infinity) {
-      campoDeExibicao.innerHTML = 'Erro ao fazer a operação'
-      setTimeout(()=> {campoDeExibicao.innerHTML = ''}, 1200)
-      return
-    }else { 
-      const elementoLista = document.createElement('li');
-      listaDasOperacoes.innerHTML += elementoLista.innerHTML
-      elementoLista.innerHTML = `${expressao.replace('.', ',')} = ${resultado.replace('.', ',')}`;
-      listaDasOperacoes.appendChild(elementoLista);
-      console.log('resultado da operação:', expressao.replace('.', ','), '=', resultado.replace('.', ','))
+  const expressao = campoDeExibicao.innerHTML.replace(',', '.');
+  const partes = expressao.split(/(\+|-|x|\/)/).map(item => item.trim()).filter(Boolean);
+  calcular.obterPilha();
+  partes.forEach((item) => {
+    if (operadores.includes(item)) {
+      calcular.adicionaOperacao(item);
+    } else {
+      calcular.adicionaValor(item);
     }
+  });
+  const resultado = calcular.calculo();
 
-    campoDeExibicao.innerHTML = resultado.toString().replace('.', ',')
+  if (isNaN(resultado) || resultado === Infinity) {
+    campoDeExibicao.innerHTML = 'Erro ao fazer a operação';
+    setTimeout(() => { campoDeExibicao.innerHTML = ''; }, 1200);
+    return;
+  } else { 
+    const elementoLista = document.createElement('li');
+    listaDasOperacoes.innerHTML += elementoLista.innerHTML;
+    elementoLista.innerHTML = `${expressao.replace('.', ',')} = ${resultado.replace('.', ',')}`;
+    listaDasOperacoes.appendChild(elementoLista);
+    console.log('resultado da operação:', expressao.replace('.', ','), '=', resultado.replace('.', ','));
+  }
+ campoDeExibicao.innerHTML = resultado.toString().replace ('.', ',');
 });
 
 botaoApagarDigito.addEventListener("click", () => {
@@ -166,10 +149,19 @@ botaoLimparHistoricos.addEventListener("click", () => {
 //funções para exibir no display quando digito no teclado --------------------------------------------------
 document.addEventListener("keydown", (evento) => {
   if (evento.key === "Enter") {
+    evento.preventDefault();
     botaoIgual.click();
   }
   const teclas = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ','];
   if (teclas.includes(evento.key)) {
+    const conteudoCampo = campoDeExibicao.innerHTML.trim();
+    const ultimoCaractere = conteudoCampo.slice(-1);
+
+    // Verifique se o último caractere é uma vírgula e a tecla pressionada é uma vírgula
+    if (ultimoCaractere === ',' && evento.key === ',') {
+      return;
+    }
+
     campoDeExibicao.innerHTML += evento.key;
   }
   if (operadores.includes(evento.key)) {
@@ -193,11 +185,12 @@ document.addEventListener("keydown", (evento) => {
   }
 });
 
-document.addEventListener("keydown", (evento)=> {
-  if(evento.key === "Delete") {
-    botaoLimparHistoricos.click()
+document.addEventListener("keydown", (evento) => {
+  if (evento.key === "Delete") {
+    botaoLimparHistoricos.click();
   }
-})
+});
+
 
 //exibir historico ---------------------------------------------------------
 const menuCheckbox = document.getElementById("menu");
