@@ -215,7 +215,7 @@ button.apagar {
 
 @media screen and (max-width: 600px) {
     .calculator {
-        width: 90%;
+        width: 80%;
     }
 
     .buttons {

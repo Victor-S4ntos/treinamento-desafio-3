@@ -6,6 +6,7 @@ const enumeradorDasOperacoes = {
 };
 
 const operadores = ['+', '-', 'x', '/'];
+const operadoresPrioritarios = ['x', '/'];
 
 class Calculadora {
   constructor() {
@@ -29,17 +30,17 @@ class Calculadora {
     const valores = [];
     const operacoes = [];
 
-    pilha.forEach((item) => {
-      if (typeof item === 'number') {
-        valores.push(item);
-      } else if (operadores.includes(item)) {
-        while (operacoes.length > 0 && operadores.indexOf(operacoes[operacoes.length - 1]) >= operadores.indexOf(item)) {
+    pilha.forEach((operadorAtual) => {
+      if (typeof operadorAtual === 'number') {
+        valores.push(operadorAtual);
+      } else if (operadores.includes(operadorAtual)) {
+        while (operacoes.length > 0 && operadores.indexOf(operacoes[operacoes.length - 1]) >= operadores.indexOf(operadorAtual)) {
           const operacao = operacoes.pop();
           const valor2 = valores.pop();
           const valor1 = valores.pop();
           valores.push(this.aplicarOperacao(valor1, valor2, operacao));
         }
-        operacoes.push(item);
+        operacoes.push(operadorAtual);
       }
     });
 
@@ -49,7 +50,6 @@ class Calculadora {
       const valor1 = valores.pop();
       valores.push(this.aplicarOperacao(valor1, valor2, operacao));
     }
-    console.log(pilha)
     this._pilha = [valores[0].toString()];
     return valores[0].toString();
   }
